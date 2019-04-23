@@ -26,5 +26,7 @@
   "homepage": "https://github.com/arcadia168/taxi-cancellation-tool#readme",
   "devDependencies": {
     "jest": "^24.7.1"
+  },
+  "dependencies": {
   }
 }
