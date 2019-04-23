@@ -23,5 +23,8 @@
   "bugs": {
     "url": "https://github.com/arcadia168/taxi-cancellation-tool/issues"
   },
-  "homepage": "https://github.com/arcadia168/taxi-cancellation-tool#readme"
+  "homepage": "https://github.com/arcadia168/taxi-cancellation-tool#readme",
+  "devDependencies": {
+    "jest": "^24.7.1"
+  }
 }
