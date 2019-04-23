@@ -1,0 +1,27 @@
+{
+  "name": "free-taxi-cancellation",
+  "version": "1.0.0",
+  "description": "A tool which takes a CSV file of booking references and cancels them",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arcadia168/taxi-cancellation-tool.git"
+  },
+  "keywords": [
+    "node",
+    "janus",
+    "cancel"
+  ],
+  "author": "***REMOVED*** ***REMOVED***",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/arcadia168/taxi-cancellation-tool/issues"
+  },
+  "homepage": "https://github.com/arcadia168/taxi-cancellation-tool#readme"
+}
