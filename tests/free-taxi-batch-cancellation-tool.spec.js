@@ -1,16 +1,42 @@
 const freeTaxiBatchCancellationTool = require('../src/free-taxi-batch-cancellation-tool');
-const csvParse = require('csv-parse');
 const fs = require('fs');
+const axios = require('axios');
 
 jest.mock('fs');
-jest.mock('csv-parse');
+jest.mock('axios');
 
 // Just have a path that points to an actual CSV file here...
-const exampleCsvPath = 'tests/mocks/example-references.csv';
+const exampleCsvPath = './mocks/example-references.csv';
 const devFreeTaxiAffiliateApiKey = 'ac57e6ad6861490ba9b407dbb7847488';
+const exampleBookingReferences = [
+    '2961396555',
+    '8121302861',
+    '3652008139',
+    '9693267800',
+    '241075238',
+    '3572742018',
+    '0684968798',
+    '0271307570',
+    '1243256206',
+    '2645257110'
+];
+
+const axiosPutMock = {
+    put: jest.fn(() => Promise.resolve())
+};
 
 describe('Free Taxi Batch Cancellation Tool', () => {
+    beforeEach(() => {
+        fs.readFileSync = jest.fn((filepath, options) => {
+            return exampleBookingReferences;
+        });
+        axios.create = jest.fn(() => axiosPutMock);
+    });
+    afterEach(() => {
+        jest.clearAllMocks();
+    });
     describe('When the program is passed in the filepath of a CSV file', () => {
+
         it('reads in the CSV file', () => {
             freeTaxiBatchCancellationTool(exampleCsvPath);
             expect(fs.readFileSync).toHaveBeenCalledWith(exampleCsvPath, {
@@ -18,9 +44,18 @@ describe('Free Taxi Batch Cancellation Tool', () => {
             });
         });
 
-        // it('Attempts to parse that CSV file into an array of Booking.com booking references', () => {
-        //     freeTaxiBatchCancellationTool(exampleCsvPath);
-        //     expect(csvParse).toHaveBeenCalled();
-        // });
+        it('makes a request to the cancellation endpoint for each request', () => {
+            freeTaxiBatchCancellationTool(exampleCsvPath);
+            expect(axiosPutMock.put.mock.calls[0][0]).toContain(exampleBookingReferences[0]);
+            expect(axiosPutMock.put.mock.calls[1][0]).toContain(exampleBookingReferences[1]);
+            expect(axiosPutMock.put.mock.calls[2][0]).toContain(exampleBookingReferences[2]);
+            expect(axiosPutMock.put.mock.calls[3][0]).toContain(exampleBookingReferences[3]);
+            expect(axiosPutMock.put.mock.calls[4][0]).toContain(exampleBookingReferences[4]);
+            expect(axiosPutMock.put.mock.calls[5][0]).toContain(exampleBookingReferences[5]);
+            expect(axiosPutMock.put.mock.calls[6][0]).toContain(exampleBookingReferences[6]);
+            expect(axiosPutMock.put.mock.calls[7][0]).toContain(exampleBookingReferences[7]);
+            expect(axiosPutMock.put.mock.calls[8][0]).toContain(exampleBookingReferences[8]);
+            expect(axiosPutMock.put.mock.calls[9][0]).toContain(exampleBookingReferences[9]);
+        });
     });
 });
