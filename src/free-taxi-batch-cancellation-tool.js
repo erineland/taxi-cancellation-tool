@@ -21,9 +21,11 @@ module.exports = (bookingReferencesCsvFilepath) => {
 
     console.log(`\n\n\n bookingReferencesToCancel is: ${bookingReferencesToCancel}`);
 
-    // Create an instance of Axios and configure header with API key
+    // Create an instance of Axios
+
     // TODO: Pass in API key
-    // TODO: Configure base URL here based on passed in env.
+    // TODO: Configure base URL here based on passed in env. DEFAULT TO DEV
+
     const axiosClient = axios.create({
         headers: {
             'X-API-KEY': 'ac57e6ad6861490ba9b407dbb7847488', // TODO: Parameterize and pass in
@@ -39,14 +41,18 @@ module.exports = (bookingReferencesCsvFilepath) => {
                     'affiliateBookingReference',
                     bookingReference
                 );
+
         axiosClient.put(
             cancellationEndpoint,
         )
             .then(response => {
                 console.log(`The response from the cancellation endpoint is: ${response}`);
             })
-        // .catch(() => {
-
-        // })
+            .catch((error, bookingReference) => {
+                console
+                    .log(
+                        `An error occurred when attempting to cancel reference: ${error.message}`
+                    );
+            })
     };
 }

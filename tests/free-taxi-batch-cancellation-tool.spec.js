@@ -31,6 +31,7 @@ describe('Free Taxi Batch Cancellation Tool', () => {
             return exampleBookingReferences;
         });
         axios.create = jest.fn(() => axiosPutMock);
+        console.log = jest.fn();
     });
     afterEach(() => {
         jest.clearAllMocks();
@@ -43,8 +44,10 @@ describe('Free Taxi Batch Cancellation Tool', () => {
                 encoding: 'utf8'
             });
         });
+    });
 
-        it('makes a request to the cancellation endpoint for each request', () => {
+    describe('When the CSV file is successfully read in and valid', () => {
+        it('makes a request to the cancellation endpoint for each reference', () => {
             freeTaxiBatchCancellationTool(exampleCsvPath);
             expect(axiosPutMock.put.mock.calls[0][0]).toContain(exampleBookingReferences[0]);
             expect(axiosPutMock.put.mock.calls[1][0]).toContain(exampleBookingReferences[1]);
@@ -56,6 +59,23 @@ describe('Free Taxi Batch Cancellation Tool', () => {
             expect(axiosPutMock.put.mock.calls[7][0]).toContain(exampleBookingReferences[7]);
             expect(axiosPutMock.put.mock.calls[8][0]).toContain(exampleBookingReferences[8]);
             expect(axiosPutMock.put.mock.calls[9][0]).toContain(exampleBookingReferences[9]);
+        });
+    });
+
+    describe('When the requests to the cancellation endpoint fail', () => {
+
+        beforeEach(() => {
+
+            const failingAxiosPut = {
+                put: jest.fn(() => Promise.reject(new Error('some error')))
+            };
+
+            axios.create = jest.fn(() => failingAxiosPut);
+        });
+
+        it('Logs the errors to the console', () => {
+            freeTaxiBatchCancellationTool(exampleCsvPath);
+            expect(console.log).toHaveBeenCalled();
         });
     });
 });
