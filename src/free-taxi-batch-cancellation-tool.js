@@ -9,7 +9,7 @@ let axiosClient;
 
 const janusCancellationEndpoint = 'https://janus-api.dev.someonedrive.me/v2/bookings/affiliate-ref/affiliateBookingReference/cancel';
 
-module.exports = (bookingReferencesCsvFilepath, apiKey) => {
+module.exports = async (bookingReferencesCsvFilepath, apiKey) => {
 
     if (!bookingReferencesCsvFilepath) {
         console.error('Error: Please supply a valid CSV filepath.');
@@ -29,7 +29,7 @@ module.exports = (bookingReferencesCsvFilepath, apiKey) => {
 
     const bookingReferencesToCancel = readAndParseCsvBookingReferences(bookingReferencesCsvFilepath);
 
-    batchCancellationRequests(bookingReferencesToCancel, apiKey);
+    await batchCancellationRequests(bookingReferencesToCancel, apiKey);
 }
 
 const readAndParseCsvBookingReferences = bookingReferencesCsvFilepath => {
@@ -48,7 +48,7 @@ const batchCancellationRequests = async (bookingReferencesToCancel, apiKey)  => 
     for (let i = 0; i < bookingReferencesToCancel.length; i++) {
         await delay(500);
         const bookingReference = bookingReferencesToCancel[i];
-        makeCancellationRequest(bookingReference, axiosClient);
+        await makeCancellationRequest(bookingReference, axiosClient);
     };
 }
 
@@ -61,14 +61,11 @@ const makeCancellationRequest = async bookingReference => {
     let cancellationEndpoint = janusCancellationEndpoint
         .replace('affiliateBookingReference', bookingReference.toString());
 
-    console.log(`the time after the delay is: ${new Date().getTime()}`);
-
-    return axiosClient.put(cancellationEndpoint)
-        .then(response => {
-            console.log(`The response from the cancellation endpoint is: ${response}`);
-        })
-        .catch((error) => {
-            console
-                .error(`An error occurred when attempting to cancel reference ${bookingReference}: ${error.message}`);
-        });
+    try {
+        const response = await axiosClient.put(cancellationEndpoint)
+        console.log(`The response from the cancellation endpoint is: ${JSON.parse(response)}`);
+        return response;
+    } catch (error) {
+        console.error(`An error occurred when attempting to cancel reference ${bookingReference}: ${error.message}`);
+    };
 }
