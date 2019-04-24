@@ -4,6 +4,7 @@ const axios = require('axios');
 
 jest.mock('fs');
 jest.mock('axios');
+// jest.useFakeTimers();
 
 // Just have a path that points to an actual CSV file here...
 const exampleCsvPath = './mocks/example-references.csv';
@@ -35,6 +36,11 @@ describe('Free Taxi Batch Cancellation Tool', () => {
         console.log = jest.fn();
         console.error = jest.fn();
         batchCancellationRequests = jest.fn();
+        // global.setTimeout = jest.fn(
+        //     cb => {
+        //         cb();
+        //     }
+        // )
     });
 
     afterEach(() => {
@@ -88,6 +94,11 @@ describe('Free Taxi Batch Cancellation Tool', () => {
             expect(axiosPutMock.put.mock.calls[7][0]).toContain(exampleBookingReferencesArray[7]);
             expect(axiosPutMock.put.mock.calls[8][0]).toContain(exampleBookingReferencesArray[8]);
             expect(axiosPutMock.put.mock.calls[9][0]).toContain(exampleBookingReferencesArray[9]);
+        });
+
+        it('waits for a given delay between each request', () => {
+            freeTaxiBatchCancellationTool(exampleCsvPath, exampleApiKey);
+            expect(global.setTimeout).toHaveBeenCalled();
         });
     });
 
