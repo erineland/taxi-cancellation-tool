@@ -6,4 +6,7 @@ console.log(`bookingsToCancelFilePath is: ${bookingsToCancelFilePath}`);
 const apiKey = process.argv[3];
 console.log(`The API key being used is: ${apiKey}`);
 
-freeTaxiBatchCancellationTool(bookingsToCancelFilePath, apiKey);
+const env = process.argv[4];
+console.log(`The environment being queried is: ${env}`);
+
+freeTaxiBatchCancellationTool(bookingsToCancelFilePath, apiKey, env);
