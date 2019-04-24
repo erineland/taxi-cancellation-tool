@@ -31,14 +31,11 @@ module.exports = (bookingReferencesCsvFilepath, apiKey) => {
 
     console.log(`\n\n\n bookingReferencesToCancel is: ${bookingReferencesToCancel}`);
 
-    // Create an instance of Axios
-
-    // TODO: Pass in API key
     // TODO: Configure base URL here based on passed in env. DEFAULT TO DEV
 
     const axiosClient = axios.create({
         headers: {
-            'apikey': 'ac57e6ad6861490ba9b407dbb7847488', // TODO: Parameterize and pass in
+            'apikey': apiKey,
         }
     });
 

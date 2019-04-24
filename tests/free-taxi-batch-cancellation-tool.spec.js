@@ -62,7 +62,18 @@ describe('Free Taxi Batch Cancellation Tool', () => {
         });
     });
 
-    describe('When the CSV file is successfully read in and valid', () => {
+    describe('When the program is passed a valid API key', () => {
+        it('uses this API key', () => {
+            freeTaxiBatchCancellationTool(exampleCsvPath, exampleApiKey);
+            expect(axios.create).toHaveBeenCalledWith({
+                headers: {
+                    'apikey': exampleApiKey,
+                }
+            });
+        });
+    });
+
+    describe('When the CSV file is successfully read in and valid, and API key is valid', () => {
         it('makes a request to the cancellation endpoint for each reference', () => {
             freeTaxiBatchCancellationTool(exampleCsvPath, exampleApiKey);
             expect(axiosPutMock.put.mock.calls[0][0]).toContain(exampleBookingReferences[0]);
