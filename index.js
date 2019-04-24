@@ -3,6 +3,7 @@ const freeTaxiBatchCancellationTool = require('./src/free-taxi-batch-cancellatio
 const bookingsToCancelFilePath = process.argv[2];
 console.log(`bookingsToCancelFilePath is: ${bookingsToCancelFilePath}`);
 
-// TODO: Read API key in as parameter.
+const apiKey = process.argv[3];
+console.log(`The API key being used is: ${apiKey}`);
 
-freeTaxiBatchCancellationTool(bookingsToCancelFilePath);
+freeTaxiBatchCancellationTool(bookingsToCancelFilePath, apiKey);
