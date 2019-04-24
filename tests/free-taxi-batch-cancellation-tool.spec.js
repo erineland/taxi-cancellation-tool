@@ -6,7 +6,6 @@ jest.mock('fs');
 jest.mock('axios');
 // jest.useFakeTimers();
 
-// Just have a path that points to an actual CSV file here...
 const exampleCsvPath = './mocks/example-references.csv';
 const exampleApiKey = 'de46f6sd6852468ds3d554sfv2743737';
 const exampleBookingReferencesArray = [
@@ -24,23 +23,25 @@ const exampleBookingReferencesArray = [
 const exampleBookingReferencesRawFileContents = exampleBookingReferencesArray.join();
 
 const axiosPutMock = {
-    put: jest.fn(() => Promise.resolve())
+    put: jest.fn(urlToCall => Promise.resolve(urlToCall)),
 };
 
 describe('Free Taxi Batch Cancellation Tool', () => {
     beforeEach(() => {
+
         fs.readFileSync = jest.fn((filepath, options) => {
             return exampleBookingReferencesRawFileContents;
         });
+
         axios.create = jest.fn(() => axiosPutMock);
+
         console.log = jest.fn();
         console.error = jest.fn();
-        batchCancellationRequests = jest.fn();
-        // global.setTimeout = jest.fn(
-        //     cb => {
-        //         cb();
-        //     }
-        // )
+
+        // global.setTimeout = jest.fn(cb => {
+        //     cb();
+        // }, 0);
+        // jest.useFakeTimers();
     });
 
     afterEach(() => {
@@ -82,18 +83,19 @@ describe('Free Taxi Batch Cancellation Tool', () => {
     });
 
     describe('When the CSV file is successfully read in and valid, and API key is valid', () => {
-        it('makes a request to the cancellation endpoint for each reference', async () => {
-            await freeTaxiBatchCancellationTool(exampleCsvPath, exampleApiKey);
-            expect(axiosPutMock.put.mock.calls[0][0]).toContain(exampleBookingReferencesArray[0]);
-            expect(axiosPutMock.put.mock.calls[1][0]).toContain(exampleBookingReferencesArray[1]);
-            expect(axiosPutMock.put.mock.calls[2][0]).toContain(exampleBookingReferencesArray[2]);
-            expect(axiosPutMock.put.mock.calls[3][0]).toContain(exampleBookingReferencesArray[3]);
-            expect(axiosPutMock.put.mock.calls[4][0]).toContain(exampleBookingReferencesArray[4]);
-            expect(axiosPutMock.put.mock.calls[5][0]).toContain(exampleBookingReferencesArray[5]);
-            expect(axiosPutMock.put.mock.calls[6][0]).toContain(exampleBookingReferencesArray[6]);
-            expect(axiosPutMock.put.mock.calls[7][0]).toContain(exampleBookingReferencesArray[7]);
-            expect(axiosPutMock.put.mock.calls[8][0]).toContain(exampleBookingReferencesArray[8]);
-            expect(axiosPutMock.put.mock.calls[9][0]).toContain(exampleBookingReferencesArray[9]);
+        it('makes a request to the cancellation endpoint for each reference', async done => {
+            const responses = await freeTaxiBatchCancellationTool(exampleCsvPath, exampleApiKey);
+            expect(responses[0]).toContain(exampleBookingReferencesArray[0]);
+            expect(responses[1]).toContain(exampleBookingReferencesArray[1]);
+            expect(responses[2]).toContain(exampleBookingReferencesArray[2]);
+            expect(responses[3]).toContain(exampleBookingReferencesArray[3]);
+            expect(responses[4]).toContain(exampleBookingReferencesArray[4]);
+            expect(responses[5]).toContain(exampleBookingReferencesArray[5]);
+            expect(responses[6]).toContain(exampleBookingReferencesArray[6]);
+            expect(responses[7]).toContain(exampleBookingReferencesArray[7]);
+            expect(responses[8]).toContain(exampleBookingReferencesArray[8]);
+            expect(responses[9]).toContain(exampleBookingReferencesArray[9]);
+            done();
         });
 
         // it('waits for a given delay between each request', () => {
@@ -112,18 +114,19 @@ describe('Free Taxi Batch Cancellation Tool', () => {
             axios.create = jest.fn(() => failingAxiosPut);
         });
 
-        it('Logs the errors to the console', () => {
-            freeTaxiBatchCancellationTool(exampleCsvPath, exampleApiKey);
-            expect(console.error.mock.calls[0][0]).toContain(exampleBookingReferencesArray[0]);
-            expect(console.error.mock.calls[1][0]).toContain(exampleBookingReferencesArray[1]);
-            expect(console.error.mock.calls[2][0]).toContain(exampleBookingReferencesArray[2]);
-            expect(console.error.mock.calls[3][0]).toContain(exampleBookingReferencesArray[3]);
-            expect(console.error.mock.calls[4][0]).toContain(exampleBookingReferencesArray[4]);
-            expect(console.error.mock.calls[5][0]).toContain(exampleBookingReferencesArray[5]);
-            expect(console.error.mock.calls[6][0]).toContain(exampleBookingReferencesArray[6]);
-            expect(console.error.mock.calls[7][0]).toContain(exampleBookingReferencesArray[7]);
-            expect(console.error.mock.calls[8][0]).toContain(exampleBookingReferencesArray[8]);
-            expect(console.error.mock.calls[9][0]).toContain(exampleBookingReferencesArray[9]);
+        it('Logs the errors to the console', async done => {
+            const responses = await freeTaxiBatchCancellationTool(exampleCsvPath, exampleApiKey);
+            expect(responses[0].message).toContain(exampleBookingReferencesArray[0]);
+            expect(responses[1].message).toContain(exampleBookingReferencesArray[1]);
+            expect(responses[2].message).toContain(exampleBookingReferencesArray[2]);
+            expect(responses[3].message).toContain(exampleBookingReferencesArray[3]);
+            expect(responses[4].message).toContain(exampleBookingReferencesArray[4]);
+            expect(responses[5].message).toContain(exampleBookingReferencesArray[5]);
+            expect(responses[6].message).toContain(exampleBookingReferencesArray[6]);
+            expect(responses[7].message).toContain(exampleBookingReferencesArray[7]);
+            expect(responses[8].message).toContain(exampleBookingReferencesArray[8]);
+            expect(responses[9].message).toContain(exampleBookingReferencesArray[9]);
+            done();
         });
     });
 });
