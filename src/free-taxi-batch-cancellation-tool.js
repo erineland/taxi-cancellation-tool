@@ -20,8 +20,15 @@ module.exports = (bookingReferencesCsvFilepath, apiKey) => {
         return;
     }
 
-    // Read CSV file into an array.
-    const bookingReferencesToCancel = fs
+    // Split this string into an array
+    const bookingReferencesToCancel = readAndParseCsvBookingReferences(bookingReferencesCsvFilepath);
+
+    // iterate over each booking.com reference and make a Janus cancellation request.
+    batchCancellationRequests(bookingReferencesToCancel, apiKey);
+}
+
+function readAndParseCsvBookingReferences(bookingReferencesCsvFilepath) {
+    const rawCsvBookingReferences = fs
         .readFileSync(
             bookingReferencesCsvFilepath,
             {
@@ -29,9 +36,10 @@ module.exports = (bookingReferencesCsvFilepath, apiKey) => {
             }
         )
 
-    console.log(`\n\n\n bookingReferencesToCancel is: ${bookingReferencesToCancel}`);
+    return rawCsvBookingReferences.split(',');
+}
 
-    // TODO: Configure base URL here based on passed in env. DEFAULT TO DEV
+function batchCancellationRequests(bookingReferencesToCancel, apiKey) {
 
     const axiosClient = axios.create({
         headers: {
@@ -39,28 +47,19 @@ module.exports = (bookingReferencesCsvFilepath, apiKey) => {
         }
     });
 
-    // iterate over each booking.com reference and make a Janus cancellation request.
     for (let i = 0; i < bookingReferencesToCancel.length; i++) {
         const bookingReference = bookingReferencesToCancel[i];
-        let cancellationEndpoint =
-            janusCancellationEndpoint
-                .replace(
-                    'affiliateBookingReference',
-                    bookingReference
-                );
-
-        axiosClient.put(
-            cancellationEndpoint,
-        )
+        let cancellationEndpoint = janusCancellationEndpoint
+            .replace('affiliateBookingReference', bookingReference.toString());
+        console.log(`\n The endpoint being called is: ${cancellationEndpoint}`);
+        axiosClient.put(cancellationEndpoint)
             .then(response => {
                 console.log(`The response from the cancellation endpoint is: ${response}`);
             })
             .catch((error) => {
-                console.log(`Failure occured`);
                 console
-                    .log(
-                        `An error occurred when attempting to cancel reference ${bookingReference}: ${error.message}`
-                    );
-            })
-    };
+                    .error(`An error occurred when attempting to cancel reference ${bookingReference}: ${error.message}`);
+            });
+    }
+    ;
 }
