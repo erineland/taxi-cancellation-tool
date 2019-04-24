@@ -8,12 +8,15 @@ const axios = require('axios');
 
 const janusCancellationEndpoint = 'https://janus-api.dev.someonedrive.me/v2/bookings/affiliate-ref/affiliateBookingReference/cancel';
 
-module.exports = (bookingReferencesCsvFilepath) => {
+module.exports = (bookingReferencesCsvFilepath, apiKey) => {
 
-    // Validate the first parameter, the CSV filepath
     if (!bookingReferencesCsvFilepath) {
-        console.error('Please supply a valid CSV filepath');
-        console.log('Please supply a valid CSV filepath');
+        console.error('Error: Please supply a valid CSV filepath.');
+        return;
+    }
+
+    if (!apiKey) {
+        console.error('Error: Please supply a valid API key.');
         return;
     }
 

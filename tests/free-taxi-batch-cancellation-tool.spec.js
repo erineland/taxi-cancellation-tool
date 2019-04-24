@@ -7,7 +7,7 @@ jest.mock('axios');
 
 // Just have a path that points to an actual CSV file here...
 const exampleCsvPath = './mocks/example-references.csv';
-const devFreeTaxiAffiliateApiKey = 'ac57e6ad6861490ba9b407dbb7847488';
+const exampleApiKey = 'de46f6sd6852468ds3d554sfv2743737';
 const exampleBookingReferences = [
     '2961396555',
     '8121302861',
@@ -34,12 +34,14 @@ describe('Free Taxi Batch Cancellation Tool', () => {
         console.log = jest.fn();
         console.error = jest.fn();
     });
+
     afterEach(() => {
         jest.clearAllMocks();
     });
+
     describe('When the program is passed in the filepath of a CSV file', () => {
         it('reads in the CSV file', () => {
-            freeTaxiBatchCancellationTool(exampleCsvPath);
+            freeTaxiBatchCancellationTool(exampleCsvPath, exampleApiKey);
             expect(fs.readFileSync).toHaveBeenCalledWith(exampleCsvPath, {
                 encoding: 'utf8'
             });
@@ -47,16 +49,22 @@ describe('Free Taxi Batch Cancellation Tool', () => {
     });
 
     describe('When the program is not passed in a valid filepath of a CSV file', () => {
-        it('throws an error', () => {
+        it('logs a relevant error and exits the program', () => {
             freeTaxiBatchCancellationTool('');
-            expect(console.error.mock.calls[0][0]).toContain('Please supply a valid CSV filepath');
+            expect(console.error.mock.calls[0][0]).toContain('Error: Please supply a valid CSV filepath');
         });
     });
 
+    describe('When the program is not passed a valid API key', () => {
+        it('logs a relevant error and exits the program', () => {
+            freeTaxiBatchCancellationTool(exampleCsvPath, '');
+            expect(console.error.mock.calls[0][0]).toContain('Error: Please supply a valid API key.');
+        });
+    });
 
     describe('When the CSV file is successfully read in and valid', () => {
         it('makes a request to the cancellation endpoint for each reference', () => {
-            freeTaxiBatchCancellationTool(exampleCsvPath);
+            freeTaxiBatchCancellationTool(exampleCsvPath, exampleApiKey);
             expect(axiosPutMock.put.mock.calls[0][0]).toContain(exampleBookingReferences[0]);
             expect(axiosPutMock.put.mock.calls[1][0]).toContain(exampleBookingReferences[1]);
             expect(axiosPutMock.put.mock.calls[2][0]).toContain(exampleBookingReferences[2]);
@@ -71,7 +79,6 @@ describe('Free Taxi Batch Cancellation Tool', () => {
     });
 
     describe('When the requests to the cancellation endpoint fail', () => {
-
         beforeEach(() => {
 
             const failingAxiosPut = {
@@ -82,7 +89,7 @@ describe('Free Taxi Batch Cancellation Tool', () => {
         });
 
         it('Logs the errors to the console', () => {
-            freeTaxiBatchCancellationTool(exampleCsvPath);
+            freeTaxiBatchCancellationTool(exampleCsvPath, exampleApiKey);
             expect(console.log.mock.calls[0][0]).toContain(exampleBookingReferences[0]);
         });
     });
