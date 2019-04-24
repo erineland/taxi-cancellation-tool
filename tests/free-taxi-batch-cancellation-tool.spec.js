@@ -48,7 +48,7 @@ describe('Free Taxi Batch Cancellation Tool', () => {
 
     describe('When the program is passed in the filepath of a CSV file', () => {
         it('reads in the CSV file', () => {
-            freeTaxiBatchCancellationTool(exampleCsvPath, exampleApiKey);
+            freeTaxiBatchCancellationTool(exampleCsvPath, exampleApiKey, 'dev');
             expect(fs.readFileSync).toHaveBeenCalledWith(exampleCsvPath, {
                 encoding: 'utf8'
             });
@@ -69,9 +69,16 @@ describe('Free Taxi Batch Cancellation Tool', () => {
         });
     });
 
+    describe('When the program is not passed in a valid environment variable', () => {
+        it('logs a relevant error and exits the program', () => {
+            freeTaxiBatchCancellationTool(exampleCsvPath, exampleApiKey, '');
+            expect(console.error.mock.calls[0][0]).toContain('Error: Please supply an environment to call');
+        });
+    });
+
     describe('When the program is passed a valid API key', () => {
         it('uses this API key', () => {
-            freeTaxiBatchCancellationTool(exampleCsvPath, exampleApiKey);
+            freeTaxiBatchCancellationTool(exampleCsvPath, exampleApiKey, 'dev');
             expect(axios.create).toHaveBeenCalledWith({
                 headers: {
                     'apikey': exampleApiKey,
@@ -82,7 +89,7 @@ describe('Free Taxi Batch Cancellation Tool', () => {
 
     describe('When the CSV file is successfully read in and valid, and API key is valid', () => {
         it('makes a request to the cancellation endpoint for each reference', async done => {
-            const responses = await freeTaxiBatchCancellationTool(exampleCsvPath, exampleApiKey);
+            const responses = await freeTaxiBatchCancellationTool(exampleCsvPath, exampleApiKey, 'dev');
             expect(responses[0]).toContain(exampleBookingReferencesArray[0]);
             expect(responses[1]).toContain(exampleBookingReferencesArray[1]);
             expect(responses[2]).toContain(exampleBookingReferencesArray[2]);
@@ -113,7 +120,7 @@ describe('Free Taxi Batch Cancellation Tool', () => {
         });
 
         it('Logs the errors to the console', async done => {
-            const responses = await freeTaxiBatchCancellationTool(exampleCsvPath, exampleApiKey);
+            const responses = await freeTaxiBatchCancellationTool(exampleCsvPath, exampleApiKey, 'dev');
             expect(responses[0].message).toContain(exampleBookingReferencesArray[0]);
             expect(responses[1].message).toContain(exampleBookingReferencesArray[1]);
             expect(responses[2].message).toContain(exampleBookingReferencesArray[2]);

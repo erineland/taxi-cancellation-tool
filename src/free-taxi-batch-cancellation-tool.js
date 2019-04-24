@@ -5,7 +5,7 @@ let axiosClient;
 
 const janusCancellationEndpoint = 'https://janus-api.dev.someonedrive.me/v2/bookings/affiliate-ref/affiliateBookingReference/cancel';
 
-module.exports = async (bookingReferencesCsvFilepath, apiKey) => {
+module.exports = async (bookingReferencesCsvFilepath, apiKey, env) => {
     if (!bookingReferencesCsvFilepath) {
         console.error('Error: Please supply a valid CSV filepath.');
         return;
@@ -13,6 +13,11 @@ module.exports = async (bookingReferencesCsvFilepath, apiKey) => {
 
     if (!apiKey) {
         console.error('Error: Please supply a valid API key.');
+        return;
+    }
+
+    if (!env) {
+        console.error('Error: Please supply an environment to call');
         return;
     }
 
