@@ -28,10 +28,7 @@ module.exports = async (bookingReferencesCsvFilepath, apiKey, env) => {
     });
 
     const bookingReferencesToCancel = readAndParseCsvBookingReferences(bookingReferencesCsvFilepath);
-    console.log(`\n The bookingReferenceToCancel are: ${bookingReferencesToCancel}`);
-
     const responses = await batchCancellationRequests(bookingReferencesToCancel, apiKey);
-    console.log(`responses are: ${responses}`);
     return responses;
 }
 
@@ -51,9 +48,7 @@ const batchCancellationRequests = async (bookingReferencesToCancel, apiKey) => {
     for (let i = 0; i < bookingReferencesToCancel.length; i++) {
         await delay(500);
         const bookingReference = bookingReferencesToCancel[i];
-        console.log(`\n Attempting to cancel booking reference: ${bookingReference}`);
         const response = await makeCancellationRequest(bookingReference, axiosClient);
-        console.log(`\n response is: ${JSON.stringify(response)} `);
         responses.push(response);
     };
     return responses;
