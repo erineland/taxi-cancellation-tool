@@ -47,7 +47,7 @@ function batchCancellationRequests(bookingReferencesToCancel, apiKey) {
         }
     });
 
-    for (let i = 0; i < bookingReferencesToCancel.length; i++) {
+    for (let i = 0; i < bookingReferencesToCancel.length -1; i++) {
         const bookingReference = bookingReferencesToCancel[i];
         let cancellationEndpoint = janusCancellationEndpoint
             .replace('affiliateBookingReference', bookingReference.toString());
@@ -60,6 +60,5 @@ function batchCancellationRequests(bookingReferencesToCancel, apiKey) {
                 console
                     .error(`An error occurred when attempting to cancel reference ${bookingReference}: ${error.message}`);
             });
-    }
-    ;
+    };
 }
