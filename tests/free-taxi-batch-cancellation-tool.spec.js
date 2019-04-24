@@ -32,12 +32,12 @@ describe('Free Taxi Batch Cancellation Tool', () => {
         });
         axios.create = jest.fn(() => axiosPutMock);
         console.log = jest.fn();
+        console.error = jest.fn();
     });
     afterEach(() => {
         jest.clearAllMocks();
     });
     describe('When the program is passed in the filepath of a CSV file', () => {
-
         it('reads in the CSV file', () => {
             freeTaxiBatchCancellationTool(exampleCsvPath);
             expect(fs.readFileSync).toHaveBeenCalledWith(exampleCsvPath, {
@@ -45,6 +45,14 @@ describe('Free Taxi Batch Cancellation Tool', () => {
             });
         });
     });
+
+    describe('When the program is not passed in a valid filepath of a CSV file', () => {
+        it('throws an error', () => {
+            freeTaxiBatchCancellationTool('');
+            expect(console.error.mock.calls[0][0]).toContain('Please supply a valid CSV filepath');
+        });
+    });
+
 
     describe('When the CSV file is successfully read in and valid', () => {
         it('makes a request to the cancellation endpoint for each reference', () => {
@@ -75,7 +83,7 @@ describe('Free Taxi Batch Cancellation Tool', () => {
 
         it('Logs the errors to the console', () => {
             freeTaxiBatchCancellationTool(exampleCsvPath);
-            expect(console.log).toHaveBeenCalled();
+            expect(console.log.mock.calls[0][0]).toContain(exampleBookingReferences[0]);
         });
     });
 });

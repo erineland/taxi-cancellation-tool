@@ -10,6 +10,13 @@ const janusCancellationEndpoint = 'https://janus-api.dev.someonedrive.me/v2/book
 
 module.exports = (bookingReferencesCsvFilepath) => {
 
+    // Validate the first parameter, the CSV filepath
+    if (!bookingReferencesCsvFilepath) {
+        console.error('Please supply a valid CSV filepath');
+        console.log('Please supply a valid CSV filepath');
+        return;
+    }
+
     // Read CSV file into an array.
     const bookingReferencesToCancel = fs
         .readFileSync(
@@ -28,7 +35,7 @@ module.exports = (bookingReferencesCsvFilepath) => {
 
     const axiosClient = axios.create({
         headers: {
-            'X-API-KEY': 'ac57e6ad6861490ba9b407dbb7847488', // TODO: Parameterize and pass in
+            'apikey': 'ac57e6ad6861490ba9b407dbb7847488', // TODO: Parameterize and pass in
         }
     });
 
@@ -48,10 +55,11 @@ module.exports = (bookingReferencesCsvFilepath) => {
             .then(response => {
                 console.log(`The response from the cancellation endpoint is: ${response}`);
             })
-            .catch((error, bookingReference) => {
+            .catch((error) => {
+                console.log(`Failure occured`);
                 console
                     .log(
-                        `An error occurred when attempting to cancel reference: ${error.message}`
+                        `An error occurred when attempting to cancel reference ${bookingReference}: ${error.message}`
                     );
             })
     };
