@@ -16,7 +16,7 @@ module.exports = async (bookingReferencesCsvFilepath, apiKey, env) => {
         return;
     }
 
-    if (!env) {
+    if (!(env === 'dev' || env === 'qa' || env === 'prod')) {
         console.error('Error: Please supply an environment to call');
         return;
     }

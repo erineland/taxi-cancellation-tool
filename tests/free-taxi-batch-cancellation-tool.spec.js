@@ -70,9 +70,18 @@ describe('Free Taxi Batch Cancellation Tool', () => {
     });
 
     describe('When the program is not passed in a valid environment variable', () => {
-        it('logs a relevant error and exits the program', () => {
-            freeTaxiBatchCancellationTool(exampleCsvPath, exampleApiKey, '');
-            expect(console.error.mock.calls[0][0]).toContain('Error: Please supply an environment to call');
+        describe('When no environment variable is passed at all', () => {
+            it('logs a relevant error and exits the program', () => {
+                freeTaxiBatchCancellationTool(exampleCsvPath, exampleApiKey, '');
+                expect(console.error.mock.calls[0][0]).toContain('Error: Please supply an environment to call');
+            });
+        });
+
+        describe('When an environment variable that is not "dev", "qa" or "prod"', () => {
+            it('logs a relevant error and exits the program', () => {
+                freeTaxiBatchCancellationTool(exampleCsvPath, exampleApiKey, 'someinvalidenv');
+                expect(console.error.mock.calls[0][0]).toContain('Error: Please supply an environment to call');
+            });
         });
     });
 
