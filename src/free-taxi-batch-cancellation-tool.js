@@ -59,9 +59,7 @@ const batchCancellationRequests = async (bookingReferencesToCancel, apiKey) => {
 }
 
 // TODO: Add this to your anki deck along with the http request module knowledge.
-const delay = interval => new Promise(
-    resolve => { setTimeout(resolve, interval); }
-);
+const delay = interval => new Promise(resolve => setTimeout(resolve, interval));
 
 const makeCancellationRequest = async bookingReference => {
     let cancellationEndpoint = janusCancellationEndpoint
@@ -76,7 +74,7 @@ const makeCancellationRequest = async bookingReference => {
             `The response from the cancellation endpoint for the booking reference ${bookingReference} is: ${response}`;
         // console.log(message);
 
-        return response;
+        return message;
     } catch (error) {
         const message =
             `An error occurred when attempting to cancel reference ${bookingReference}: ${error.message}`
