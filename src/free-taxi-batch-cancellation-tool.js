@@ -2,10 +2,6 @@ const fs = require('fs');
 const axios = require('axios');
 
 let axiosClient;
-// TODO: Write option for making the calls one at a time...
-// const makeCancellationRequests = bookingReference => {
-//     axios.put
-// }
 
 const janusCancellationEndpoint = 'https://janus-api.dev.someonedrive.me/v2/bookings/affiliate-ref/affiliateBookingReference/cancel';
 
@@ -48,7 +44,7 @@ const readAndParseCsvBookingReferences = bookingReferencesCsvFilepath => {
 const batchCancellationRequests = async (bookingReferencesToCancel, apiKey) => {
     const responses = [];
     for (let i = 0; i < bookingReferencesToCancel.length; i++) {
-        // await delay(500);
+        await delay(500);
         const bookingReference = bookingReferencesToCancel[i];
         console.log(`\n Attempting to cancel booking reference: ${bookingReference}`);
         const response = await makeCancellationRequest(bookingReference, axiosClient);

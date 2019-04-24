@@ -4,7 +4,10 @@ const axios = require('axios');
 
 jest.mock('fs');
 jest.mock('axios');
-// jest.useFakeTimers();
+
+global.setTimeout = jest.fn(cb => {
+    cb();
+}, 0);
 
 const exampleCsvPath = './mocks/example-references.csv';
 const exampleApiKey = 'de46f6sd6852468ds3d554sfv2743737';
@@ -37,11 +40,6 @@ describe('Free Taxi Batch Cancellation Tool', () => {
 
         console.log = jest.fn();
         console.error = jest.fn();
-
-        // global.setTimeout = jest.fn(cb => {
-        //     cb();
-        // }, 0);
-        // jest.useFakeTimers();
     });
 
     afterEach(() => {
