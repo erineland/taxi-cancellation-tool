@@ -2,6 +2,8 @@ const fs = require('fs');
 const axios = require('axios');
 
 let axiosClient;
+const failedCancellationsBookingReferences = [];
+const successfullyCancelledRequests = [];
 
 const janusCancellationEndpoint = 'https://janus-api.dev.someonedrive.me/v2/bookings/affiliate-ref/affiliateBookingReference/cancel';
 
@@ -29,7 +31,25 @@ module.exports = async (bookingReferencesCsvFilepath, apiKey, env, tempTestCallb
 
     const bookingReferencesToCancel = readAndParseCsvBookingReferences(bookingReferencesCsvFilepath);
     const responses = await batchCancellationRequests(bookingReferencesToCancel, tempTestCallback);
-    return responses;
+
+    fs.writeFileSync(
+        './output/failed-cancellation-booking-references.csv',
+        failedCancellationsBookingReferences,
+        'utf8',
+    )
+
+    console.info(`\nFailed booking request references were written to path:\n ./output/failed-cancellation-booking-references.csv`)
+    console.info(`\nThe failed cancellations were: ${failedCancellationsBookingReferences}`);
+    console.info(`The successful cancellations were: ${successfullyCancelledRequests}`);
+
+    const formattedCancellationResults = {
+        failedCancellationReferencesFilepath: './output/failed-cancellation-booking-references.csv',
+        failedCancellations: failedCancellationsBookingReferences,
+        cancelledBookings: successfullyCancelledRequests,
+        responses
+    };
+
+    return formattedCancellationResults;
 }
 
 const readAndParseCsvBookingReferences = bookingReferencesCsvFilepath => {
@@ -55,7 +75,7 @@ const batchCancellationRequests = async (bookingReferencesToCancel, tempTestCall
 }
 
 // TODO: Add this to your anki deck along with the http request module knowledge.
-const delay = (interval) => new Promise(resolve => setTimeout(resolve,interval));
+const delay = (interval) => new Promise(resolve => setTimeout(resolve, interval));
 
 const makeCancellationRequest = async bookingReference => {
     let cancellationEndpoint = janusCancellationEndpoint
@@ -65,7 +85,9 @@ const makeCancellationRequest = async bookingReference => {
         const response = await axiosClient.put(cancellationEndpoint);
 
         const message =
-            `Successful cancellations for: ${JSON.stringify(response.data)}`;
+            `Successful cancellation for: ${JSON.stringify(response.data)}`;
+
+        successfullyCancelledRequests.push(bookingReference);
 
         console.log(message);
 
@@ -74,8 +96,10 @@ const makeCancellationRequest = async bookingReference => {
         const message =
             `An error occurred when attempting to cancel reference ${bookingReference}: ${error.message} `
 
+        failedCancellationsBookingReferences.push(bookingReference);
+
         console.error(message);
 
-        return new Error(message);
+        return message;
     };
 }
