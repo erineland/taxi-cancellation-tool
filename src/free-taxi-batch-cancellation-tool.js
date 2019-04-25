@@ -55,13 +55,11 @@ const batchCancellationRequests = async (bookingReferencesToCancel, tempTestCall
 }
 
 // TODO: Add this to your anki deck along with the http request module knowledge.
-function delay(interval, tempTestCallback) {
+function delay(interval) {
     return new Promise(
         // Realise that Promise INTERNALLY supplied 'resolve' function.
         function (resolve, reject) {
             setTimeout(function () {
-                console.log(`Waiting: ${new Date().getTime()}`);
-                tempTestCallback();
                 resolve();
             },
                 interval

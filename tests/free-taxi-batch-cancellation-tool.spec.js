@@ -4,13 +4,10 @@ const axios = require('axios');
 
 jest.mock('fs');
 jest.mock('axios');
-jest.useFakeTimers();
-const spy = jest.fn();
 
-// const originalTimeout = global.setTimeout;
-// global.setTimeout = jest.fn(cb => {
-//     cb();
-// });
+global.setTimeout = jest.fn(cb => {
+    cb();
+});
 
 const exampleCsvPath = './mocks/example-references.csv';
 const exampleApiKey = 'de46f6sd6852468ds3d554sfv2743737';
@@ -29,7 +26,14 @@ const exampleBookingReferencesArray = [
 const exampleBookingReferencesRawFileContents = exampleBookingReferencesArray.join();
 
 const axiosPutMock = {
-    put: jest.fn(urlToCall => Promise.resolve(urlToCall)),
+    put: jest.fn(urlToCall => Promise.resolve({
+        data: {
+            affiliateReference: urlToCall,
+            bookingReferences: [
+                "SOMETAXIBOOKINGREFERENCE"
+            ]
+        }
+    })),
 };
 
 describe('Free Taxi Batch Cancellation Tool', () => {
@@ -101,8 +105,7 @@ describe('Free Taxi Batch Cancellation Tool', () => {
 
     describe('When the CSV file is successfully read in and valid, API key is valid and an env is passed', () => {
         it('makes a request to the cancellation endpoint for each reference', async done => {
-            const responses = await freeTaxiBatchCancellationTool(exampleCsvPath, exampleApiKey, 'dev', spy);
-            jest.runAllTimers();
+            const responses = await freeTaxiBatchCancellationTool(exampleCsvPath, exampleApiKey, 'dev');
             expect(responses[0]).toContain(exampleBookingReferencesArray[0]);
             expect(responses[1]).toContain(exampleBookingReferencesArray[1]);
             expect(responses[2]).toContain(exampleBookingReferencesArray[2]);
@@ -114,16 +117,6 @@ describe('Free Taxi Batch Cancellation Tool', () => {
             expect(responses[8]).toContain(exampleBookingReferencesArray[8]);
             expect(responses[9]).toContain(exampleBookingReferencesArray[9]);
             done();
-        });
-
-        // TODO: test the delay code.
-        it('waits for a given delay between each request', async () => {
-            jest.useFakeTimers();
-            await freeTaxiBatchCancellationTool(exampleCsvPath, exampleApiKey, 'dev', spy);
-            jest.runAllTimers();
-            jest.advanceTimersByTime(1000);
-            // expect(setTimeout).toHaveBeenCalledTimes(10);
-            expect(spy).toHaveBeenCalled();
         });
     });
 
@@ -138,8 +131,7 @@ describe('Free Taxi Batch Cancellation Tool', () => {
         });
 
         it('Logs the errors to the console', async done => {
-            const responses = await freeTaxiBatchCancellationTool(exampleCsvPath, exampleApiKey, 'dev', spy);
-            jest.runAllTimers();
+            const responses = await freeTaxiBatchCancellationTool(exampleCsvPath, exampleApiKey, 'dev');
             expect(responses[0].message).toContain(exampleBookingReferencesArray[0]);
             expect(responses[1].message).toContain(exampleBookingReferencesArray[1]);
             expect(responses[2].message).toContain(exampleBookingReferencesArray[2]);
