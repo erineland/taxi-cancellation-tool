@@ -5,7 +5,7 @@ let axiosClient;
 const failedCancellationsBookingReferences = [];
 const successfullyCancelledRequests = [];
 
-const janusCancellationEndpoint = 'https://janus-api.dev.someonedrive.me/v2/bookings/affiliate-ref/affiliateBookingReference/cancel';
+let janusCancellationEndpoint = 'https://janus-api.ENV.someonedrive.me/v2/bookings/affiliate-ref/affiliateBookingReference/cancel';
 
 module.exports = async (bookingReferencesCsvFilepath, apiKey, env, tempTestCallback) => {
     if (!bookingReferencesCsvFilepath) {
@@ -22,6 +22,8 @@ module.exports = async (bookingReferencesCsvFilepath, apiKey, env, tempTestCallb
         console.error('Error: Please supply an environment to call');
         return;
     }
+
+    janusCancellationEndpoint = janusCancellationEndpoint.replace('ENV', env);
 
     axiosClient = axios.create({
         headers: {
@@ -79,6 +81,7 @@ const delay = (interval) => new Promise(resolve => setTimeout(resolve, interval)
 const makeCancellationRequest = async bookingReference => {
     let cancellationEndpoint = janusCancellationEndpoint
         .replace('affiliateBookingReference', bookingReference.toString());
+    console.log(`\n cancellationEndpoint being called is: ${cancellationEndpoint}`);
 
     try {
         const response = await axiosClient.put(cancellationEndpoint);

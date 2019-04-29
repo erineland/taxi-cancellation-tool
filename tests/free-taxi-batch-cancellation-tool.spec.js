@@ -107,40 +107,55 @@ describe('Free Taxi Batch Cancellation Tool', () => {
     });
 
     describe('When the CSV file is successfully read in and valid, API key is valid and an env is passed', () => {
-        let responses;
+        let response;
         beforeEach(async () => {
-            responses = await freeTaxiBatchCancellationTool(exampleCsvPath, exampleApiKey, 'dev');
+            response = await freeTaxiBatchCancellationTool(exampleCsvPath, exampleApiKey, 'dev');
         });
 
+        //calls the relevant endpoint
+        // describe('when endpoint has valid env passed into it', () => {
+        //     describe('when dev env is passed in', () => {
+        //         expect(axiosPutMock.put.mock.calls[0][0]).toContain('dev');
+        //     });
+
+        //     describe('when qa env is passed in', () => {
+        //         expect(axiosPutMock.put.mock.calls[0][0]).toContain('qa');
+        //     });
+
+        //     describe('when prod env is passed in', () => {
+        //         expect(axiosPutMock.put.mock.calls[0][0]).toContain('prod');
+        //     });
+        // });
+
         it('makes a request to the cancellation endpoint for each reference', async () => {
-            expect(responses.cancelledBookings[0]).toContain(exampleBookingReferencesArray[0]);
-            expect(responses.cancelledBookings[1]).toContain(exampleBookingReferencesArray[1]);
-            expect(responses.cancelledBookings[2]).toContain(exampleBookingReferencesArray[2]);
-            expect(responses.cancelledBookings[3]).toContain(exampleBookingReferencesArray[3]);
-            expect(responses.cancelledBookings[4]).toContain(exampleBookingReferencesArray[4]);
-            expect(responses.cancelledBookings[5]).toContain(exampleBookingReferencesArray[5]);
-            expect(responses.cancelledBookings[6]).toContain(exampleBookingReferencesArray[6]);
-            expect(responses.cancelledBookings[7]).toContain(exampleBookingReferencesArray[7]);
-            expect(responses.cancelledBookings[8]).toContain(exampleBookingReferencesArray[8]);
-            expect(responses.cancelledBookings[9]).toContain(exampleBookingReferencesArray[9]);
+            expect(response.cancelledBookings[0]).toContain(exampleBookingReferencesArray[0]);
+            expect(response.cancelledBookings[1]).toContain(exampleBookingReferencesArray[1]);
+            expect(response.cancelledBookings[2]).toContain(exampleBookingReferencesArray[2]);
+            expect(response.cancelledBookings[3]).toContain(exampleBookingReferencesArray[3]);
+            expect(response.cancelledBookings[4]).toContain(exampleBookingReferencesArray[4]);
+            expect(response.cancelledBookings[5]).toContain(exampleBookingReferencesArray[5]);
+            expect(response.cancelledBookings[6]).toContain(exampleBookingReferencesArray[6]);
+            expect(response.cancelledBookings[7]).toContain(exampleBookingReferencesArray[7]);
+            expect(response.cancelledBookings[8]).toContain(exampleBookingReferencesArray[8]);
+            expect(response.cancelledBookings[9]).toContain(exampleBookingReferencesArray[9]);
         });
 
         it('recieves an array of responses from the endpoint', async () => {
-            expect(responses.responses[0]).toContain(exampleBookingReferencesArray[0]);
-            expect(responses.responses[1]).toContain(exampleBookingReferencesArray[1]);
-            expect(responses.responses[2]).toContain(exampleBookingReferencesArray[2]);
-            expect(responses.responses[3]).toContain(exampleBookingReferencesArray[3]);
-            expect(responses.responses[4]).toContain(exampleBookingReferencesArray[4]);
-            expect(responses.responses[5]).toContain(exampleBookingReferencesArray[5]);
-            expect(responses.responses[6]).toContain(exampleBookingReferencesArray[6]);
-            expect(responses.responses[7]).toContain(exampleBookingReferencesArray[7]);
-            expect(responses.responses[8]).toContain(exampleBookingReferencesArray[8]);
-            expect(responses.responses[9]).toContain(exampleBookingReferencesArray[9]);
+            expect(response.responses[0]).toContain(exampleBookingReferencesArray[0]);
+            expect(response.responses[1]).toContain(exampleBookingReferencesArray[1]);
+            expect(response.responses[2]).toContain(exampleBookingReferencesArray[2]);
+            expect(response.responses[3]).toContain(exampleBookingReferencesArray[3]);
+            expect(response.responses[4]).toContain(exampleBookingReferencesArray[4]);
+            expect(response.responses[5]).toContain(exampleBookingReferencesArray[5]);
+            expect(response.responses[6]).toContain(exampleBookingReferencesArray[6]);
+            expect(response.responses[7]).toContain(exampleBookingReferencesArray[7]);
+            expect(response.responses[8]).toContain(exampleBookingReferencesArray[8]);
+            expect(response.responses[9]).toContain(exampleBookingReferencesArray[9]);
         });
     });
 
     describe('When the requests to the cancellation endpoint fail', () => {
-        let responses;
+        let response;
 
         beforeEach(async () => {
 
@@ -150,20 +165,20 @@ describe('Free Taxi Batch Cancellation Tool', () => {
 
             axios.create = jest.fn(() => failingAxiosPut);
 
-            responses = await freeTaxiBatchCancellationTool(exampleCsvPath, exampleApiKey, 'dev');
+            response = await freeTaxiBatchCancellationTool(exampleCsvPath, exampleApiKey, 'dev');
         });
 
         it('Returns an array of error messages', () => {
-            expect(responses.failedCancellations[0]).toContain(exampleBookingReferencesArray[0]);
-            expect(responses.failedCancellations[1]).toContain(exampleBookingReferencesArray[1]);
-            expect(responses.failedCancellations[2]).toContain(exampleBookingReferencesArray[2]);
-            expect(responses.failedCancellations[3]).toContain(exampleBookingReferencesArray[3]);
-            expect(responses.failedCancellations[4]).toContain(exampleBookingReferencesArray[4]);
-            expect(responses.failedCancellations[5]).toContain(exampleBookingReferencesArray[5]);
-            expect(responses.failedCancellations[6]).toContain(exampleBookingReferencesArray[6]);
-            expect(responses.failedCancellations[7]).toContain(exampleBookingReferencesArray[7]);
-            expect(responses.failedCancellations[8]).toContain(exampleBookingReferencesArray[8]);
-            expect(responses.failedCancellations[9]).toContain(exampleBookingReferencesArray[9]);
+            expect(response.failedCancellations[0]).toContain(exampleBookingReferencesArray[0]);
+            expect(response.failedCancellations[1]).toContain(exampleBookingReferencesArray[1]);
+            expect(response.failedCancellations[2]).toContain(exampleBookingReferencesArray[2]);
+            expect(response.failedCancellations[3]).toContain(exampleBookingReferencesArray[3]);
+            expect(response.failedCancellations[4]).toContain(exampleBookingReferencesArray[4]);
+            expect(response.failedCancellations[5]).toContain(exampleBookingReferencesArray[5]);
+            expect(response.failedCancellations[6]).toContain(exampleBookingReferencesArray[6]);
+            expect(response.failedCancellations[7]).toContain(exampleBookingReferencesArray[7]);
+            expect(response.failedCancellations[8]).toContain(exampleBookingReferencesArray[8]);
+            expect(response.failedCancellations[9]).toContain(exampleBookingReferencesArray[9]);
         });
 
         it('Writes a CSV file of failed cancellation requests', () => {
@@ -175,7 +190,7 @@ describe('Free Taxi Batch Cancellation Tool', () => {
         });
 
         it('Returns the filepath where the failed cancellation references have been written to', () => {
-            expect(responses.failedCancellationReferencesFilepath).toBe('./output/failed-cancellation-booking-references.csv');
+            expect(response.failedCancellationReferencesFilepath).toBe('./output/failed-cancellation-booking-references.csv');
         });
     });
 });
