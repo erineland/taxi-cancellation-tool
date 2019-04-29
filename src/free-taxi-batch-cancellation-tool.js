@@ -23,7 +23,6 @@ module.exports = async (bookingReferencesCsvFilepath, apiKey, env, tempTestCallb
         return;
     }
 
-    //TODO: needs some form of unit test.
     janusCancellationEndpoint = defaultCancellationEndpoint.replace('ENV', env);
 
     axiosClient = axios.create({
@@ -88,9 +87,6 @@ const delay = (interval) => new Promise(resolve => setTimeout(resolve, interval)
 const makeCancellationRequest = async bookingReference => {
     let cancellationEndpoint = janusCancellationEndpoint
         .replace('affiliateBookingReference', bookingReference.toString());
-
-    // TODO: needs test
-    console.log(`cancellationEndpoint being called is: ${cancellationEndpoint}`);
 
     try {
         const response = await axiosClient.put(cancellationEndpoint);

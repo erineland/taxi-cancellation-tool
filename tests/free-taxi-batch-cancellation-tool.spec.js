@@ -108,24 +108,37 @@ describe('Free Taxi Batch Cancellation Tool', () => {
 
     describe('When the CSV file is successfully read in and valid, API key is valid and an env is passed', () => {
         let response;
+
         beforeEach(async () => {
             response = await freeTaxiBatchCancellationTool(exampleCsvPath, exampleApiKey, 'dev');
         });
 
-        //calls the relevant endpoint
-        // describe('when endpoint has valid env passed into it', () => {
-        //     describe('when dev env is passed in', () => {
-        //         expect(axiosPutMock.put.mock.calls[0][0]).toContain('dev');
-        //     });
+        describe('when endpoint has valid env passed into it', () => {
+            beforeEach(() => {
+                axiosPutMock.put.mockClear();
+            });
 
-        //     describe('when qa env is passed in', () => {
-        //         expect(axiosPutMock.put.mock.calls[0][0]).toContain('qa');
-        //     });
+            describe('when dev env is passed in', () => {
+                it('calls the dev endpoint', async () => {
+                    response = await freeTaxiBatchCancellationTool(exampleCsvPath, exampleApiKey, 'dev');
+                    expect(axiosPutMock.put.mock.calls[0][0]).toContain('dev');
+                });
+            });
 
-        //     describe('when prod env is passed in', () => {
-        //         expect(axiosPutMock.put.mock.calls[0][0]).toContain('prod');
-        //     });
-        // });
+            describe('when qa env is passed in', () => {
+                it('calls the qa endpoint', async () => {
+                    response = await freeTaxiBatchCancellationTool(exampleCsvPath, exampleApiKey, 'qa');
+                    expect(axiosPutMock.put.mock.calls[1][0]).toContain('qa');
+                });
+            });
+
+            describe('when prod env is passed in', () => {
+                it('calls the prod endpoint', async () => {
+                    response = await freeTaxiBatchCancellationTool(exampleCsvPath, exampleApiKey, 'prod');
+                    expect(axiosPutMock.put.mock.calls[2][0]).toContain('prod');
+                });
+            });
+        });
 
         it('makes a request to the cancellation endpoint for each reference', async () => {
             expect(response.cancelledBookings[0]).toContain(exampleBookingReferencesArray[0]);
