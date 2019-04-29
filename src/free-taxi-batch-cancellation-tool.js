@@ -5,7 +5,7 @@ let axiosClient;
 const failedCancellationsBookingReferences = [];
 const successfullyCancelledRequests = [];
 
-let janusCancellationEndpoint = 'https://janus-api.ENV.someonedrive.me/v2/bookings/affiliate-ref/affiliateBookingReference/cancel';
+let defaultCancellationEndpoint = 'https://janus-api.ENV.someonedrive.me/v2/bookings/affiliate-ref/affiliateBookingReference/cancel';
 
 module.exports = async (bookingReferencesCsvFilepath, apiKey, env, tempTestCallback) => {
     if (!bookingReferencesCsvFilepath) {
@@ -23,7 +23,8 @@ module.exports = async (bookingReferencesCsvFilepath, apiKey, env, tempTestCallb
         return;
     }
 
-    janusCancellationEndpoint = janusCancellationEndpoint.replace('ENV', env);
+    //TODO: needs some form of unit test.
+    janusCancellationEndpoint = defaultCancellationEndpoint.replace('ENV', env);
 
     axiosClient = axios.create({
         headers: {
@@ -55,13 +56,19 @@ module.exports = async (bookingReferencesCsvFilepath, apiKey, env, tempTestCallb
 }
 
 const readAndParseCsvBookingReferences = bookingReferencesCsvFilepath => {
-    const rawCsvBookingReferences = fs
+    let rawCsvBookingReferences = fs
         .readFileSync(
             bookingReferencesCsvFilepath,
             {
                 encoding: 'utf8'
             }
         );
+
+    //TODO: needs unit test
+    rawCsvBookingReferences = rawCsvBookingReferences.replace(/(\r\n|\n|\r)/gm,"");
+
+    console.log(`The rawCsvBookingReferences is: ${rawCsvBookingReferences}`);
+
     return rawCsvBookingReferences.split(',');
 }
 
@@ -81,7 +88,9 @@ const delay = (interval) => new Promise(resolve => setTimeout(resolve, interval)
 const makeCancellationRequest = async bookingReference => {
     let cancellationEndpoint = janusCancellationEndpoint
         .replace('affiliateBookingReference', bookingReference.toString());
-    console.log(`\n cancellationEndpoint being called is: ${cancellationEndpoint}`);
+
+    // TODO: needs test
+    console.log(`cancellationEndpoint being called is: ${cancellationEndpoint}`);
 
     try {
         const response = await axiosClient.put(cancellationEndpoint);
