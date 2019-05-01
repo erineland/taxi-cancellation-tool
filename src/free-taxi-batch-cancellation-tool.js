@@ -63,7 +63,6 @@ const readAndParseCsvBookingReferences = bookingReferencesCsvFilepath => {
             }
         );
 
-    //TODO: needs unit test
     rawCsvBookingReferences = rawCsvBookingReferences.replace(/(\r\n|\n|\r)/gm,"");
 
     console.log(`The rawCsvBookingReferences is: ${rawCsvBookingReferences}`);

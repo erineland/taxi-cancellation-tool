@@ -2,17 +2,18 @@ const freeTaxiBatchCancellationTool = require('../src/free-taxi-batch-cancellati
 const fs = require('fs');
 const axios = require('axios');
 
-jest.mock('fs');
+// jest.mock('fs');
 jest.mock('axios');
+jest.spyOn(fs, 'readFileSync');
 
 global.setTimeout = jest.fn(cb => {
     cb();
 });
 
-const exampleCsvPath = './mocks/example-references.csv';
+const exampleCsvPath = '/Users/***REMOVED***b/Dropbox/Documents/Development Resources/Scripts/node-free-taxi-cancellation/tests/mocks/example-references.csv';
 const exampleApiKey = 'de46f6sd6852468ds3d554sfv2743737';
 const exampleBookingReferencesArray = [
-    '2961396555',
+    '10065649',
     '8121302861',
     '3652008139',
     '9693267800',
@@ -21,9 +22,8 @@ const exampleBookingReferencesArray = [
     '0684968798',
     '0271307570',
     '1243256206',
-    '2645257110'
+    '2645257110',
 ];
-const exampleBookingReferencesRawFileContents = exampleBookingReferencesArray.join();
 
 const axiosPutMock = {
     put: jest.fn(urlToCall => Promise.resolve({
@@ -38,11 +38,6 @@ const axiosPutMock = {
 
 describe('Free Taxi Batch Cancellation Tool', () => {
     beforeEach(() => {
-
-        fs.readFileSync = jest.fn((filepath, options) => {
-            return exampleBookingReferencesRawFileContents;
-        });
-
         fs.writeFileSync = jest.fn();
 
         axios.create = jest.fn(() => axiosPutMock);
@@ -112,6 +107,12 @@ describe('Free Taxi Batch Cancellation Tool', () => {
         beforeEach(async () => {
             response = await freeTaxiBatchCancellationTool(exampleCsvPath, exampleApiKey, 'dev');
         });
+
+        describe('When the CSV contains newline characters', () => {
+            it('removes them', () => {
+                expect(axiosPutMock.put.mock.calls[11][0]).not.toContain('\n');
+            })
+        })
 
         describe('when endpoint has valid env passed into it', () => {
             beforeEach(() => {
