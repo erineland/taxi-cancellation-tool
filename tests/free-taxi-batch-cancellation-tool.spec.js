@@ -136,7 +136,7 @@ describe('Free Taxi Batch Cancellation Tool', () => {
             describe('when prod env is passed in', () => {
                 it('calls the prod endpoint', async () => {
                     response = await freeTaxiBatchCancellationTool(exampleCsvPath, exampleApiKey, 'prod');
-                    expect(axiosPutMock.put.mock.calls[2][0]).toContain('prod');
+                    expect(axiosPutMock.put.mock.calls[2][0]).toContain('https://janus-api.rideways.com');
                 });
             });
         });

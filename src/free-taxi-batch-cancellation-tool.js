@@ -23,7 +23,12 @@ module.exports = async (bookingReferencesCsvFilepath, apiKey, env, tempTestCallb
         return;
     }
 
-    janusCancellationEndpoint = defaultCancellationEndpoint.replace('ENV', env);
+    if (env === 'prod') {
+        janusCancellationEndpoint =
+            'https://janus-api.rideways.com/v2/bookings/affiliate-ref/affiliateBookingReference/cancel'
+    } else {
+        janusCancellationEndpoint = defaultCancellationEndpoint.replace('ENV', env);
+    }
 
     axiosClient = axios.create({
         headers: {
@@ -63,7 +68,7 @@ const readAndParseCsvBookingReferences = bookingReferencesCsvFilepath => {
             }
         );
 
-    rawCsvBookingReferences = rawCsvBookingReferences.replace(/(\r\n|\n|\r)/gm,"");
+    rawCsvBookingReferences = rawCsvBookingReferences.replace(/(\r\n|\n|\r)/gm, "");
 
     console.log(`The rawCsvBookingReferences is: ${rawCsvBookingReferences}`);
 
