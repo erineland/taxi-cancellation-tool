@@ -2,7 +2,6 @@ const freeTaxiBatchCancellationTool = require('../src/free-taxi-batch-cancellati
 const fs = require('fs');
 const axios = require('axios');
 
-// jest.mock('fs');
 jest.mock('axios');
 jest.spyOn(fs, 'readFileSync');
 
@@ -197,6 +196,10 @@ describe('Free Taxi Batch Cancellation Tool', () => {
 
         it('Writes a CSV file of failed cancellation requests', () => {
             expect(fs.writeFileSync.mock.calls[0][0]).toBe('./output/failed-cancellation-booking-references.csv');
+        });
+
+        it('Writes a CSV file of successfully cancelled bookings requests', () => {
+            expect(fs.writeFileSync.mock.calls[1][0]).toBe('./output/successfully-cancelled-booking-references.csv');
         });
 
         it('Outputs the CSV filename where failed booking requests are written to', () => {

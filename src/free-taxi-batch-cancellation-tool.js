@@ -6,6 +6,7 @@ const failedCancellationsBookingReferences = [];
 const successfullyCancelledRequests = [];
 
 let defaultCancellationEndpoint = 'https://janus-api.ENV.someonedrive.me/v2/bookings/affiliate-ref/affiliateBookingReference/cancel';
+let janusCancellationEndpoint;
 
 module.exports = async (bookingReferencesCsvFilepath, apiKey, env, tempTestCallback) => {
     if (!bookingReferencesCsvFilepath) {
@@ -25,7 +26,7 @@ module.exports = async (bookingReferencesCsvFilepath, apiKey, env, tempTestCallb
 
     if (env === 'prod') {
         janusCancellationEndpoint =
-            'https://janus-api.rideways.com/v2/bookings/affiliate-ref/affiliateBookingReference/cancel'
+            defaultCancellationEndpoint.replace('janus-api.ENV.someonedrive.me', 'janus-api.rideways.com');
     } else {
         janusCancellationEndpoint = defaultCancellationEndpoint.replace('ENV', env);
     }
@@ -42,6 +43,14 @@ module.exports = async (bookingReferencesCsvFilepath, apiKey, env, tempTestCallb
     fs.writeFileSync(
         './output/failed-cancellation-booking-references.csv',
         failedCancellationsBookingReferences,
+        'utf8',
+    )
+
+    './output/successfully-cancelled-booking-references.csv'
+
+    fs.writeFileSync(
+        './output/successfully-cancelled-booking-references.csv',
+        successfullyCancelledRequests,
         'utf8',
     )
 
