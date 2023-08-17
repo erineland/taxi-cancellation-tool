@@ -9,7 +9,7 @@ global.setTimeout = jest.fn(cb => {
     cb();
 });
 
-const exampleCsvPath = '/Users/***REMOVED***b/Dropbox/Documents/Development Resources/Scripts/node-free-taxi-cancellation/tests/mocks/example-references.csv';
+const exampleCsvPath = '/Users/elande/Dropbox/Documents/Development Resources/Scripts/node-free-taxi-cancellation/tests/mocks/example-references.csv';
 const exampleApiKey = 'de46f6sd6852468ds3d554sfv2743737';
 const exampleBookingReferencesArray = [
     '10065649',
